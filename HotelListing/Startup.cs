@@ -28,10 +28,19 @@ namespace HotelListing
         {
            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCors(options => {
+                options.AddPolicy("AllowAll", builder =>
+                                              builder.AllowAnyOrigin()
+                                                     .AllowAnyMethod()
+                                                     .AllowAnyHeader()
+                                                );
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info {Title = "HotelListing",Version = "v1" });
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +60,7 @@ namespace HotelListing
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
             app.UseMvc();
             
         }
