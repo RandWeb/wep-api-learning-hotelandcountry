@@ -78,13 +78,13 @@ namespace HotelListing.Repository.Implementaion
         }
 
         #region
-        public static void ForEach<Temp>(this IEnumerable<Temp> enumeration, Action<Temp> action)
+      /*  public static void ForEach<Temp>(this IEnumerable<Temp> enumeration, Action<Temp> action)
         {
             foreach (Temp item in enumeration)
             {
                 action(item);
             }
-        }
+        }*/
         #endregion
     }
 }
