@@ -27,11 +27,13 @@ namespace HotelListing.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetHotels()
         {
             try
             {
-                var hotels = await _unitOfWork.Hotels.GetAll();
+                var hotels = await _unitOfWork.Hotels.GetAll(null,null,new List<string> { "Country"});
                 var results = mapper.Map<IList<HotelDTO>>(hotels);
                 return Ok(results);
             }
@@ -44,11 +46,13 @@ namespace HotelListing.Controllers
             }
         }
         [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetHotel(int id)
         {
             try
             {
-                var hotel = await _unitOfWork.Hotels.Get(q=>q.Id==id);
+                var hotel = await _unitOfWork.Hotels.Get(q => q.Id == id, new List<string> { "Country" });
                 var result = mapper.Map<HotelDTO>(hotel);
                 return Ok(result);
             }
