@@ -16,7 +16,7 @@ namespace HotelListing.Repository.Contracts
 
         Task<T> Get(
             Expression<Func<T,bool>> expression,
-            List<string> includes);
+            List<string> includes = null);
 
         Task Insert(T entity);
         Task InsertRange(IEnumerable<T> entities);

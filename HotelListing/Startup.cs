@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.Configurations;
 using HotelListing.Data;
+using HotelListing.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,15 @@ namespace HotelListing
             services.AddDbContext<HotelDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("sql-server"))
             );
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddMvcCore().AddApiExplorer()
+                .AddAuthorization()
+                .AddJsonFormatters()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>
@@ -44,26 +54,28 @@ namespace HotelListing
             });
             services.AddAutoMapper(typeof(MapperIntializer));
 
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "HotelListing", Version = "v1" });
             });
 
-
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+/*            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
-            {
+            {*/
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
+         //   }
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelListing v1"));
 

@@ -31,10 +31,10 @@ namespace HotelListing.Repository.Implementaion
             _db.RemoveRange(entities);
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes)
+        public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes=null)
         {
             IQueryable<T> query = _db;
-            if (includes ==null)
+            if (includes !=null)
                 foreach (var includeProperty in includes)
                     query = query.Include(includeProperty);
 
@@ -44,13 +44,9 @@ namespace HotelListing.Repository.Implementaion
         public async Task<IList<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
         {
             IQueryable<T> query = _db;
-            query = (query == null) ? query : query.Where(expression);
+            query = (expression == null) ? query : query.Where(expression);
+            if (includes != null)includes.ForEach(includeProperty=> query=query.Include(includeProperty));
             query = (orderBy == null) ? query : orderBy(query);
-            // query = (expression == null) ? query : includes.ForEach(item => query = query.Include(item)) ;
-            if (expression != null)
-                foreach (var includeProperty in includes)
-                    query = query.Include(includeProperty);
-
             return await query.AsNoTracking().ToListAsync();
         }
 
@@ -76,15 +72,5 @@ namespace HotelListing.Repository.Implementaion
         {
             _db.UpdateRange(entities);
         }
-
-        #region
-      /*  public static void ForEach<Temp>(this IEnumerable<Temp> enumeration, Action<Temp> action)
-        {
-            foreach (Temp item in enumeration)
-            {
-                action(item);
-            }
-        }*/
-        #endregion
     }
 }
