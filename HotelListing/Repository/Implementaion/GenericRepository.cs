@@ -11,10 +11,10 @@ namespace HotelListing.Repository.Implementaion
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly HotelDbContext _context;
+        private readonly AppDbContext _context;
         private readonly DbSet<T> _db;
 
-        public GenericRepository(HotelDbContext context)
+        public GenericRepository(AppDbContext context)
         {
             _context = context;
             _db = _context.Set<T>();

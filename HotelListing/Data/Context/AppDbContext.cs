@@ -1,4 +1,5 @@
 ﻿using HotelListing.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace HotelListing.Data
 {
-    public class HotelDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
-        public HotelDbContext(DbContextOptions<HotelDbContext> options):base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options):base(options)
         {
 
         }
@@ -18,6 +19,7 @@ namespace HotelListing.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration<Hotel>(new ConfigurationHotel());
+            modelBuilder.ApplyConfiguration<Role>(new ConfigurationRole());
             modelBuilder.Entity<Country>().HasData(
                 new Country { Id=1,Name="Iran",ShortName="ir"},
                 new Country { Id=2,Name="Soryie",ShortName="so"},
