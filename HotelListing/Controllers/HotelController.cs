@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HotelListing.Data.Entities;
 using HotelListing.Models;
 using HotelListing.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace HotelListing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class HotelController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -47,7 +48,7 @@ namespace HotelListing.Controllers
 
             }
         }
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}",Name = "GetHotel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetHotel(int id)
@@ -64,6 +65,27 @@ namespace HotelListing.Controllers
                 return BadRequest(ex);
                 // return StatusCode(500,"Internal Server Error, Pease Try Again Later");
 
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateHotel([FromBody] HotelDTO hotelDto)
+        {
+            try
+            {
+                var hotel = mapper.Map<Hotel>(hotelDto);
+                await _unitOfWork.Hotels.Insert(hotel);
+                await _unitOfWork.Save();
+                return CreatedAtRoute("GetHotel", new { id = hotel.Id },hotel);
+                    }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, $"Sothing Went Wrong in the {nameof(CreateHotel)}");
+                return StatusCode(500,$"Internal Server Error, Please Try Again Later {ex}");
+                throw;
             }
         }
     }
