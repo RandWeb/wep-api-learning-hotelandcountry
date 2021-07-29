@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.Models;
 using HotelListing.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace HotelListing.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CountryController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -23,6 +23,12 @@ namespace HotelListing.Data.Entities
         {
             builder.HasKey(p => p.Id);
             builder.HasOne(c => c.Country).WithMany(h => h.Hotels).HasForeignKey(p => p.CountryId);
+            builder.HasData(
+                new Hotel { Id = 1, Name = "Pars", Address = "bolvar k", CountryId = 1, Rating = 3.2 },
+                new Hotel { Id = 2, Name = "nor afshar", Address = "darband", CountryId = 1, Rating = 4.2 },
+                new Hotel { Id = 3, Name = "baghdad", Address = "sabz k", CountryId = 3, Rating = 2.1 },
+                new Hotel { Id = 4, Name = "saires", Address = "santigao k", CountryId = 4, Rating = 1.2 }
+                );
         }
     }
 }

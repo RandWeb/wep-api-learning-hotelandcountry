@@ -2,6 +2,8 @@
 using HotelListing.Configurations;
 using HotelListing.Data;
 using HotelListing.Repository;
+using HotelListing.Services.Contracts;
+using HotelListing.Services.Implementaions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,7 +40,7 @@ namespace HotelListing
             );
             services.AddAuthentication();
             services.AddIdentity();
-            
+            services.AddJwt(Configuration);
             services.AddMvcCore().AddApiExplorer()
                 .AddAuthorization()
                 .AddJsonFormatters()
@@ -58,6 +60,7 @@ namespace HotelListing
             services.AddAutoMapper(typeof(MapperIntializer));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager,AuthManager>();
 
             services.AddSwaggerGen(c =>
             {

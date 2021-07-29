@@ -18,6 +18,7 @@ namespace HotelListing.Models
         [Required]
         [StringLength(15,ErrorMessage ="Your Password is limited to {2} to {1} character",MinimumLength =3)]
         public string Password { get; set; }
+        public ICollection<string> Roles { get; set; }
 
     }
 
