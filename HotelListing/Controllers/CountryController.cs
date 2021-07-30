@@ -69,12 +69,11 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCountry([FromBody] CountryCommand countryCommand)
+        public async Task<IActionResult> CreateCountry([FromBody] CreateCountryDTO createCountryDto)
         {
             try
             {
-                var countryDto = _mapper.Map<CountryDTO>(countryCommand);
-                var country = _mapper.Map<Country>(countryDto);
+                var country = _mapper.Map<Country>(createCountryDto);
                 await _unitOfWork.Countries.Insert(country);
                 await _unitOfWork.Save();
                 return CreatedAtRoute("GetCountry",new {id=country.Id },country);
@@ -86,6 +85,34 @@ namespace HotelListing.Controllers
                 throw;
             }
         }
+
+        [Authorize]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCountry(int id,[FromBody] UpdateCountryDTO countryDTO)
+        {
+            try
+            {
+                var country = await _unitOfWork.Countries.Get(q=>q.Id==id);
+                if (country == null)
+                {
+                    return BadRequest("Submitted Data is invalid");
+                }
+                _mapper.Map(countryDTO, country);
+                _unitOfWork.Countries.Update(country);
+                await _unitOfWork.Save();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Sothing Went Wrong in the {nameof(UpdateCountry)}");
+                return StatusCode(500, $"Internal Server Error, Please Try Again Later {ex}");
+            }
+        }
+
+      
 
     }
 }

@@ -36,8 +36,7 @@ namespace HotelListing.Services.Implementaions
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
-            var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(
-              jwtSettings.GetSection("lifetime").Value));
+            var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("lifetime").Value));
 
             var token = new JwtSecurityToken(
                 issuer: jwtSettings.GetSection("Issuer").Value,
@@ -71,7 +70,7 @@ namespace HotelListing.Services.Implementaions
             return new SigningCredentials(secret,SecurityAlgorithms.HmacSha256);
         }
 
-        public async Task<bool> ValidateUser(UserDTO userDTO)
+        public async Task<bool> ValidateUser(LoginUserDTO userDTO)
         {
             _user = await _userManager.FindByNameAsync(userDTO.Email);
             return (_user!=null && await _userManager.CheckPasswordAsync(_user,userDTO.Password));

@@ -36,16 +36,16 @@ namespace HotelListing.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Register([FromBody] UserCommand userCommand)
+        public async Task<IActionResult> Register([FromBody] UserDTO userDto)
         {
-            _logger.LogInformation($"Regestration Attemt for {userCommand.Email}");
+            _logger.LogInformation($"Regestration Attemt for {userDto.Email}");
             
             try
             {
-                var userDTO = _mapper.Map<UserDTO>(userCommand);
+                var userDTO = _mapper.Map<UserDTO>(userDto);
                 var user = _mapper.Map<User>(userDTO);
                 user.UserName = user.Email;
-                var result = await _userManager.CreateAsync(user,userCommand.Password);
+                var result = await _userManager.CreateAsync(user,userDto.Password);
                 if (!result.Succeeded)
                 {
                    foreach (var error in result.Errors)
@@ -62,22 +62,20 @@ namespace HotelListing.Controllers
                 return StatusCode(500,$"Something Went Wrong in the {nameof(Register)}");
             }
             
-            return Accepted($"{userCommand} Added");
+            return Accepted($"{userDto} Added");
         }
-       [HttpPost()]
+        [HttpPost()]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] UserCommand userCommand)
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDto)
         {
-            _logger.LogInformation($"Login Attemt for {userCommand.Email}");
+            _logger.LogInformation($"Login Attemt for {loginUserDto.Email}");
             
             try
             {
-                var user = _mapper.Map<UserDTO>(userCommand);
-                if (!await _authManager.ValidateUser(user))
+                if (!await _authManager.ValidateUser(loginUserDto))
                     return Unauthorized("User login Attempt Failed");
                 else
                     return Accepted(new {Token = await _authManager.CreateToken() });
-                return BadRequest("sorry");
             }
             catch (Exception ex)
             {
