@@ -1,10 +1,15 @@
 ﻿using HotelListing.Data;
 using HotelListing.Data.Entities;
+using HotelListing.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +50,27 @@ namespace HotelListing.Configurations
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("Key").Value)),
 
                 };
+            });
+        }
+
+        public static void ConfifurationExceptionHandler(this IApplicationBuilder app)
+        {
+            app.UseExceptionHandler(errpr =>
+            {
+                errpr.Run(async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "application/json";
+                    var conteextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (conteextFeature!=null)
+                    {
+                        Log.Error($"Somthing Went Wring in the {nameof(conteextFeature.Error)}");
+                        await context.Response.WriteAsync(new Error {
+                        StarusCode = context.Response.StatusCode,
+                        Message = "Internal Server Error. Please Try Again Later"
+                        }.ToString());
+                    }
+                });
             });
         }
     }

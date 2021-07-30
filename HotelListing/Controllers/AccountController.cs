@@ -40,8 +40,6 @@ namespace HotelListing.Controllers
         {
             _logger.LogInformation($"Regestration Attemt for {userDto.Email}");
             
-            try
-            {
                 var userDTO = _mapper.Map<UserDTO>(userDto);
                 var user = _mapper.Map<User>(userDTO);
                 user.UserName = user.Email;
@@ -54,13 +52,7 @@ namespace HotelListing.Controllers
                     }
                     return BadRequest(ModelState);
                 }
-                await _userManager.AddToRolesAsync(user,userDTO.Roles);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,$"Somthing went Wrong in the{nameof(Register)}");
-                return StatusCode(500,$"Something Went Wrong in the {nameof(Register)}");
-            }
+            await _userManager.AddToRolesAsync(user, userDTO.Roles);
             
             return Accepted($"{userDto} Added");
         }
@@ -70,19 +62,11 @@ namespace HotelListing.Controllers
         {
             _logger.LogInformation($"Login Attemt for {loginUserDto.Email}");
             
-            try
-            {
+
                 if (!await _authManager.ValidateUser(loginUserDto))
                     return Unauthorized("User login Attempt Failed");
                 else
                     return Accepted(new {Token = await _authManager.CreateToken() });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,$"Somthing went Wrong in the {nameof(Login)}");
-                return StatusCode(500,$"Something Went Wrong in the {nameof(Login)}");
-            }
-            
         }
     }
 
