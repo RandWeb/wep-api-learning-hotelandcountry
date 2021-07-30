@@ -36,7 +36,7 @@ namespace HotelListing.Controllers
         {
             try
             {
-                var hotels = await _unitOfWork.Hotels.GetAll(null,null,new List<string> { "Country"});
+                var hotels = await _unitOfWork.Hotels.GetAll(null,null,new List<string> { "Country",});
                 var results = mapper.Map<IList<HotelDTO>>(hotels);
                 return Ok(results);
             }
@@ -67,7 +67,7 @@ namespace HotelListing.Controllers
 
             }
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
