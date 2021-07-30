@@ -31,11 +31,11 @@ namespace HotelListing.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> GetHotels()
+        public async Task<ActionResult> GetHotels([FromQuery] RequestParams requestParams)
         {
             try
             {
-                var hotels = await _unitOfWork.Hotels.GetAll(null,null,new List<string> { "Country",});
+                var hotels = await _unitOfWork.Hotels.GetPagedList(requestParams);
                 var results = _mapper.Map<IList<HotelDTO>>(hotels);
                 return Ok(results);
             }

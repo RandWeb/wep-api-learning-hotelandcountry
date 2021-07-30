@@ -1,8 +1,11 @@
-﻿using System;
+﻿using HotelListing.Models;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace HotelListing.Repository.Contracts
 {
@@ -13,7 +16,10 @@ namespace HotelListing.Repository.Contracts
             Func<IQueryable<T>,IOrderedQueryable<T>> orderBy = null,
             List<string> includes = null
             );
-
+        Task<IPagedList<T>> GetPagedList(
+            RequestParams requestParams,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
+            );
         Task<T> Get(
             Expression<Func<T,bool>> expression,
             List<string> includes = null);
