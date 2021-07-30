@@ -66,7 +66,7 @@ namespace HotelListing
             {
                 c.SwaggerDoc("v1", new Info { Title = "HotelListing", Version = "v1" });
             });
-
+            services.ConfigurationVersioning();
            
         }
 
