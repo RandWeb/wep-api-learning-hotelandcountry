@@ -38,10 +38,27 @@ namespace HotelListing
             services.AddDbContext<AppDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("sql-server"))
             );
+
+            services.AddMemoryCache();
+
+            services.ConfigureRateLimiting();
+            services.AddHttpContextAccessor();
+
+            services.ConfigureHttpCacheHeaders();
+
             services.AddAuthentication();
             services.AddIdentity();
             services.AddJwt(Configuration);
-            services.AddMvcCore().AddApiExplorer()
+            services.AddMvcCore(config =>
+            {
+                config.CacheProfiles.Add("120SecondDuration",
+                new CacheProfile
+                {
+                    Duration = 120
+                });
+            }).AddApiExplorer(
+
+                )
                 .AddAuthorization()
                 .AddJsonFormatters()
                 .AddJsonOptions(options =>
@@ -60,35 +77,30 @@ namespace HotelListing
             services.AddAutoMapper(typeof(MapperIntializer));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IAuthManager,AuthManager>();
+            services.AddScoped<IAuthManager, AuthManager>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "HotelListing", Version = "v1" });
             });
             services.ConfigurationVersioning();
-           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-/*            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {*/
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            //   }
-            app.ConfifurationExceptionHandler();
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelListing v1"));
-
+            app.ConfifurationExceptionHandler();
+            app.UseCors("AllowAll");
+            app.UseResponseCaching();
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseCors("AllowAll");
+
             app.UseMvc();
 
         }
