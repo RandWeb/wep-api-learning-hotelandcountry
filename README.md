@@ -12,4 +12,4 @@
 
 #5 learning DpendencyInjection
 
-#6 learning DataTransferObject(DTP)
+#6 learning DataTransferObject(DTO)
