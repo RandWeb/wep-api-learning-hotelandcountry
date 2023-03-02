@@ -1,6 +1,6 @@
  
 # wep-api-learning-hotelandcountry
-یکی پروژه آموزشی برای یادگیری RestFullApi 
+پروژه آموزشی برای یادگیری RestFullApi 
 
 #1 learning Code First
 
